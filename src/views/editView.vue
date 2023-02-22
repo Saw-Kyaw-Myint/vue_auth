@@ -11,15 +11,18 @@
             <h3 class=" text-primary text-center">Edit Form</h3>
           </div>
         <div class="card-body">
-          <form @submit.prevent="create">
+          <form @submit.prevent="update">
             <div class="form-group">
               <label for="email" class=" form-label">Image:</label>
-              <input type="file" class="form-control"   @change="handleImageChange" id="email">
-              <img :src="previewImage" v-if="previewImage"   class="w-25 my-2">
+              <input type="file" class="form-control" name="image"   @change="handleImageChange" id="email">
+              <p class="text-danger">{{ errors?.image }}</p>
+              <img :src="'http://127.0.0.1:8000/storage/'+ editImage" v-if="showImage" alt="" class="w-25">
+              <img :src="previewImage"  v-if="previewImage"    class="w-25 my-2">
             </div>
             <div class="form-group">
               <label for="pwd" class=" form-label">Name:</label>
-              <input type="text" class="form-control" id="pwd" v-model="form.name">
+              <input type="text" class="form-control" id="pwd" name="name" v-model="form.name">
+              <p class="text-danger">{{ errors?.name }}</p>
             </div>
             <div class="form-group mt-2">
               <button type="submit" class="btn btn-primary">Submit</button>
@@ -38,24 +41,24 @@ import { ref,reactive,onMounted } from 'vue';
 import axios from 'axios';
 import router from '../router';
 import { useRoute } from 'vue-router'
-import { DOMDirectiveTransforms } from '@vue/compiler-dom';
 
 const route = useRoute();
 const imageFile = ref(null);
 const previewImage = ref(null);
 const file=ref('');
+const showImage=ref(true);
+const editImage=ref('');
+const errors=ref();
 let form=reactive({
   name:'',
   image:''
 });
 
-
-
 onMounted(async () => {
   await axios.get(`http://127.0.0.1:8000/api/product/${route.params.id}`).then((response) => {
- console.log(response.data);
+form.name=response.data.name;
+editImage.value=response.data.image;
   });
-
 });
 
 const handleImageChange = (event) => {
@@ -67,25 +70,28 @@ const handleImageChange = (event) => {
     reader.onload = (e) => {
       previewImage.value = e.target.result;
     };
+    showImage.value=false;
     reader.readAsDataURL(file);
   }
 };
 
-    // function create(e) {
-    //   const config = {
-    //     headers: {
-    //       "content-type": "multipart/form-data",
-    //     },
-    //   };
-    //   axios.post("http://127.0.0.1:8000/api/product/create", form, config)
-    //     .then((response) => {
-    //       alert(response.data.message);
-    //     router.push({name:'dashboard'});
-    //     })
-    //     .catch(function (error) {
-    //        console.log(error)
-    //     });
-    // }
+function update() {
+  const config = {
+    headers: {
+      "content-type": "multipart/form-data",
+    },
+  };
+
+  axios
+    .post(`http://127.0.0.1:8000/api/product/update/${route.params.id}`,form, config)
+    .then((response) => {
+      alert(response.data.message);
+      router.push({name:'dashboard'});
+    })
+    .catch(function (error) {
+   errors.value=error.response.data.errors
+    });
+}
 
 </script>
 

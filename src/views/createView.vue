@@ -11,16 +11,17 @@
             <h3 class=" text-primary text-center">Create Form</h3>
           </div>
         <div class="card-body">
-          {{ form }}
           <form @submit.prevent="create">
             <div class="form-group">
               <label for="email" class=" form-label">Image:</label>
-              <input type="file" class="form-control"   @change="handleImageChange" id="email">
+              <input type="file" class="form-control" name="image"   @change="handleImageChange" id="email">
+              <p class="text-danger">{{ errors?.image }}</p>
               <img :src="previewImage" v-if="previewImage"   class="w-25 my-2">
             </div>
             <div class="form-group">
               <label for="pwd" class=" form-label">Name:</label>
-              <input type="text" class="form-control" id="pwd" v-model="form.name">
+              <input type="text" class="form-control" id="pwd" name="name" v-model="form.name">
+              <p class="text-danger">{{ errors?.name }}</p>
             </div>
             <div class="form-group mt-2">
               <button type="submit" class="btn btn-primary">Submit</button>
@@ -42,6 +43,7 @@ import router from '../router';
 
 const imageFile = ref(null);
 const previewImage = ref(null);
+const errors=ref();
 const file=ref('');
 let form=reactive({
   name:'',
@@ -73,7 +75,7 @@ const handleImageChange = (event) => {
         router.push({name:'dashboard'});
         })
         .catch(function (error) {
-           console.log(error)
+      errors.value=error.response.data.errors;
         });
     }
 

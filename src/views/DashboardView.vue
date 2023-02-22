@@ -6,7 +6,7 @@
         <div class=" d-flex col-5 align-items-center justify-content-between">
           <p class="h3">Name : <span class=" text-primary text-uppercase"> {{ currentUser?.name }}</span></p>
           <div class="">
-            <RouterLink to="/create" class="h4 text-secondary">create</RouterLink>
+            <RouterLink to="/create" class="h4 btn btn-primary text-white">create</RouterLink>
           </div>
         </div>
         <div class="">
@@ -15,7 +15,7 @@
       </div>
     </div>
     <!-- table  -->
-    <table class="table">
+    <table class="table table-bordered bg-white rounded table-striped  shadowp">
       <thead>
         <tr>
           <th scope="col">id</th>
@@ -28,10 +28,10 @@
         <tr v-for="(product, index) in productList" :key="index">
           <th scope="row">{{ product?.id }}</th>
           <td>{{ product?.name }}</td>
-          <td><img v-bind:src="'http://127.0.0.1:8000/storage/' + product?.image" alt=""></td>
+          <td><img v-bind:src="'http://127.0.0.1:8000/storage/' + product?.image" class="w-25"></td>
           <td class="d-flex">
-            <router-link :to='{name:"edit",params:{id:product?.id}}' class="btn btn-success">Edit</router-link>
-            <button class="btn btn-danger" @click="deleteProduct(product?.id)">delete</button>
+            <router-link :to='{name:"edit",params:{id:product?.id}}' class="btn btn-success btn-sm m-2">Edit</router-link>
+            <button class="btn btn-danger m-2" @click="deleteProduct(product?.id)">delete</button>
           </td>
         </tr>
       </tbody>
